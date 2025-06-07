@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: Q2xhdmUqUGFyYSpFbCpNYW5lam8vRGUtRmVhdHVyZSs1PVBhZ29zLFkuRmFjdHVhczc4OUNvdXJpZXIsU3luYw==  # Clave para firmar el token (32+ caracteres)
+    expiration: 1800000
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fabrica20251
+    username: postgres
+    password: root123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  info:
+    title: "CourierSync API"
+    description: "API para la optimización de procesos logísticos. Feature 5: Pagos y Facturación."
+    version: "v1.0.0"
+  components:
+    securitySchemes:
+      bearer-key:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
