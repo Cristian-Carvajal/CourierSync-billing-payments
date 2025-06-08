@@ -36,9 +36,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String requestURI = request.getRequestURI();
 
-        // Ignorar filtro en rutas públicas
-        if (requestURI.startsWith("/auth/") ||
-                requestURI.startsWith("/swagger-ui") ||
+        if (requestURI.startsWith("/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (requestURI.startsWith("/swagger-ui") ||
                 requestURI.startsWith("/v3/api-docs")) {
             filterChain.doFilter(request, response);
             return;

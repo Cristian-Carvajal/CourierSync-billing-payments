@@ -2,13 +2,12 @@ package com.udea.CourierSync.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "notification_log")
 @Data
-public class Payment {
+public class NotificationLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,16 +18,19 @@ public class Payment {
     private Invoice invoice;
 
     @Column(nullable = false)
-    private BigDecimal amount;
+    private String type;
 
-    @Column(name = "payment_date", nullable = false)
-    private LocalDateTime paymentDate;
+    @Lob // Para textos largos
+    private String content;
 
-    @Column(name = "payment_method", nullable = false)
-    private String paymentMethod;
+    @Column(nullable = false)
+    private String receiver;
+
+    @Column(name = "send_date", nullable = false)
+    private LocalDateTime sendDate;
 
     @PrePersist
     protected void onCreate() {
-        this.paymentDate = LocalDateTime.now();
+        this.sendDate = LocalDateTime.now();
     }
 }

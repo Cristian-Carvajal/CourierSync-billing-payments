@@ -1,77 +1,43 @@
 package com.udea.CourierSync.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
+@Data
 public class User {
 
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userId;
+    private Integer id;
+
     @Column(nullable = false)
     private String name;
-    @Column(unique = true)
+
+    @Column(nullable = false)
+    private String lastName;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String userType; // ejemplo: ADMIN, FINANCE, CONDUCTOR
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    @Column(nullable = false)
+    private UserRole role;
+
+    @Column(name = "creation_date", nullable = false, updatable = false)
+    private LocalDateTime creationDate;
+
+    @Column(name = "hash_password", nullable = false)
     private String passwordHash;
+
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+        this.creationDate = LocalDateTime.now();
     }
 
 }

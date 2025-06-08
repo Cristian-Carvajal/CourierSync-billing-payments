@@ -40,7 +40,7 @@ public class AuthController {
         UserDetails userDetails = userRepository.findByEmail(authRequestDTO.getEmail())
                 .map(user -> new org.springframework.security.core.userdetails.User(
                         user.getEmail(), user.getPasswordHash(),
-                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserType()))))
+                        List.of(new SimpleGrantedAuthority(user.getRole().toString()))))
                 .orElseThrow();
 
         String token = jwtService.generateToken(userDetails);
@@ -57,9 +57,10 @@ public class AuthController {
 
         User newUser = new User();
         newUser.setName(registerDTO.getName());
+        newUser.setLastName(registerDTO.getLastName());
         newUser.setEmail(registerDTO.getEmail());
         newUser.setPasswordHash(hashedPassword);
-        newUser.setUserType(registerDTO.getUserType()); // ej. "ADMIN", "USER", etc.
+        newUser.setRole(registerDTO.getRole()); // ej. "ADMIN", "USER", etc.
 
         userRepository.save(newUser);
 
