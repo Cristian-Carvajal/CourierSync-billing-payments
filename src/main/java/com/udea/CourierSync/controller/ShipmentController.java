@@ -28,7 +28,7 @@ public class ShipmentController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
-    @Operation(summary = "Registra un nuevo envío y genera su factura automáticamente")
+    @Operation(summary = "Registra un nuevo envío y genera su factura automáticamente (Requiere ID de cliente y ruta, de lo contrario falla)")
     public ResponseEntity<Void> createShipment(@Valid @RequestBody CreateShipmentDTO createShipmentDTO) {
         Shipment newShipment = shipmentService.createShipmentAndInvoice(createShipmentDTO);
 
