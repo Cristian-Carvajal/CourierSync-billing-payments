@@ -5,6 +5,8 @@ import com.udea.CourierSync.dto.AuthRequestDTO;
 import com.udea.CourierSync.dto.AuthResponseDTO;
 import com.udea.CourierSync.dto.RegisterDTO;
 import com.udea.CourierSync.repository.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,17 +14,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.udea.CourierSync.entity.User;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "API para la gestión de Clientes")
 public class AuthController {
 
     private final AuthenticationManager authManager;
@@ -30,8 +31,8 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // falta pedir la contraseña sin hash y hashearla
     @PostMapping("/login")
+    @Operation(summary = "Retorna un token jwt con la informacion necesaria para la autenticacion")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO authRequestDTO) {
         authManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authRequestDTO.getEmail(),
@@ -48,6 +49,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Registra un usuario nuevo")
     public ResponseEntity<String> registerUser(@RequestBody RegisterDTO registerDTO) {
         if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body("This email is already in use");
