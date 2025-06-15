@@ -41,4 +41,9 @@ public class ShipmentService {
 
         return savedShipment;
     }
+
+    public Shipment findById(Long id) {
+        return shipmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Envío con id " + id + " no encontrado"));
+    }
 }

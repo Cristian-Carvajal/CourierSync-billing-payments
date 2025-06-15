@@ -4,6 +4,7 @@ import com.udea.CourierSync.dto.ClientInfoDTO;
 import com.udea.CourierSync.dto.InvoiceDTO;
 import com.udea.CourierSync.dto.ShipmentInfoDTO;
 import com.udea.CourierSync.entity.Invoice;
+import com.udea.CourierSync.entity.InvoiceStatus;
 import com.udea.CourierSync.service.InvoiceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +36,11 @@ public class InvoiceController {
 
         invoiceDTO.add(linkTo(methodOn(InvoiceController.class).getInvoiceById(id)).withSelfRel());
         invoiceDTO.add(linkTo(methodOn(InvoiceController.class).downloadInvoice(id)).withRel("download"));
+        invoiceDTO.add(linkTo(methodOn(ClientController.class).getClientById(invoice.getClient().getId())).withRel("client"));
+        invoiceDTO.add(linkTo(methodOn(ShipmentController.class).getShipmentById(invoice.getShipment().getId())).withRel("shipment"));
+        if (invoice.getPaymentStatus() == InvoiceStatus.PENDING || invoice.getPaymentStatus() == InvoiceStatus.OVERDUE) {
+            invoiceDTO.add(linkTo(methodOn(PaymentController.class).registerPayment(null)).withRel("add-payment"));
+        }
 
         return ResponseEntity.ok(invoiceDTO);
     }

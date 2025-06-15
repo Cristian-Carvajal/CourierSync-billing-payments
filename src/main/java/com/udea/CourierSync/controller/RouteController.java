@@ -11,9 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @CrossOrigin
@@ -30,11 +32,6 @@ public class RouteController {
     public ResponseEntity<RouteDTO> createRoute(@Valid @RequestBody CreateRouteDTO createRouteDTO) {
         Route newRoute = routeService.createRoute(createRouteDTO);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(newRoute.getId())
-                .toUri();
-
         RouteDTO routeDTO = RouteDTO.builder()
                 .id(newRoute.getId())
                 .origin(newRoute.getOrigin())
@@ -43,6 +40,10 @@ public class RouteController {
                 .estimatedTime(newRoute.getEstimatedTime())
                 .trafficLevel(newRoute.getTrafficLevel())
                 .build();
+
+        routeDTO.add(linkTo(methodOn(ClientController.class).getClientById(newRoute.getId())).withSelfRel());
+
+        URI location = URI.create(routeDTO.getLink("self").get().getHref());
 
         return ResponseEntity.created(location).body(routeDTO);
     }

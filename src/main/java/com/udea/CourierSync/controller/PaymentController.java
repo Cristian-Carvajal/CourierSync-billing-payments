@@ -3,7 +3,7 @@ package com.udea.CourierSync.controller;
 import com.udea.CourierSync.dto.CreatePaymentDTO;
 import com.udea.CourierSync.dto.PaymentDTO;
 import com.udea.CourierSync.entity.Payment;
-import com.udea.CourierSync.service.PaymentService; // <-- CAMBIO IMPORTANTE
+import com.udea.CourierSync.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,7 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Tag(name = "Payments", description = "API para la gestión de Pagos")
 public class PaymentController {
 
-    private final PaymentService paymentService; // <-- AHORA USA EL PaymentService
+    private final PaymentService paymentService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE')")

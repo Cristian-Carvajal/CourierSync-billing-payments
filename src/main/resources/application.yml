@@ -37,3 +37,9 @@ springdoc:
         type: http
         scheme: bearer
         bearerFormat: JWT
+
+couriersync:
+  billing:
+    cost-per-kg: 2500
+    base-fee: 5000
+    tax-rate: 0.19

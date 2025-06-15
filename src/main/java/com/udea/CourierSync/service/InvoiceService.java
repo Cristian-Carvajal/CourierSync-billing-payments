@@ -1,22 +1,17 @@
 package com.udea.CourierSync.service;
 
-import com.udea.CourierSync.dto.CreatePaymentDTO;
 import com.udea.CourierSync.entity.Invoice;
-import com.udea.CourierSync.entity.InvoiceStatus;
-import com.udea.CourierSync.entity.Payment;
 import com.udea.CourierSync.entity.Shipment;
-import com.udea.CourierSync.exception.BusinessException;
 import com.udea.CourierSync.exception.ResourceNotFoundException;
 import com.udea.CourierSync.repository.InvoiceRepository;
 import com.udea.CourierSync.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +20,14 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final PaymentRepository paymentRepository;
 
-    // Constantes para el cálculo del costo (pueden venir de la BD o un config file)
-    private static final BigDecimal COST_PER_KG = new BigDecimal("2500");
-    private static final BigDecimal BASE_FEE = new BigDecimal("5000");
-    private static final BigDecimal TAX_RATE = new BigDecimal("0.19"); // 19% IVA
+    @Value("${couriersync.billing.cost-per-kg}")
+    private BigDecimal COST_PER_KG;
+
+    @Value("${couriersync.billing.base-fee}")
+    private BigDecimal BASE_FEE;
+
+    @Value("${couriersync.billing.tax-rate}")
+    private BigDecimal TAX_RATE;
 
     // Se utiliza para mantener consistencia en la base de datos en caso de algun error
     @Transactional

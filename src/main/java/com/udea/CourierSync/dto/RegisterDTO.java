@@ -10,7 +10,7 @@ public class RegisterDTO {
     private String name;
     private String lastName;
     private String email;
-    private String password; // contraseña en claro
+    private String password;
     private UserRole role;
 
 }

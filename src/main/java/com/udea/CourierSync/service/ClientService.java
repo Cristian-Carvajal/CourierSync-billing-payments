@@ -3,6 +3,7 @@ package com.udea.CourierSync.service;
 import com.udea.CourierSync.dto.CreateClientDTO;
 import com.udea.CourierSync.entity.Client;
 import com.udea.CourierSync.exception.BusinessException;
+import com.udea.CourierSync.exception.ResourceNotFoundException;
 import com.udea.CourierSync.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,6 @@ public class ClientService {
     private final ClientRepository clientRepository;
 
     public Client createClient(CreateClientDTO dto) {
-        // Validación de negocio: verificar si ya existe un cliente con el mismo email
         clientRepository.findByEmail(dto.getEmail()).ifPresent(client -> {
             throw new BusinessException("Ya existe un cliente con el email: " + dto.getEmail());
         });
@@ -27,5 +27,10 @@ public class ClientService {
         newClient.setShipmentPreferences(dto.getShipmentPreferences());
 
         return clientRepository.save(newClient);
+    }
+
+    public Client findById(Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Factura con id: " + id + " no encontrada"));
     }
 }

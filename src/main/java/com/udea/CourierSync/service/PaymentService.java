@@ -77,7 +77,7 @@ public class PaymentService {
         invoiceRepository.save(invoice);
     }
 
-    private BigDecimal getTotalPaidForInvoice(Long invoiceId) {
+    public BigDecimal getTotalPaidForInvoice(Long invoiceId) {
         List<Payment> existingPayments = paymentRepository.findByInvoiceId(invoiceId);
         return existingPayments.stream()
                 .map(Payment::getAmount)

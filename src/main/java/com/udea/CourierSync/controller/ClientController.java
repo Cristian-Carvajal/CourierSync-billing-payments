@@ -11,9 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @CrossOrigin
@@ -30,11 +32,6 @@ public class ClientController {
     public ResponseEntity<ClientDTO> createClient(@Valid @RequestBody CreateClientDTO createClientDTO) {
         Client newClient = clientService.createClient(createClientDTO);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(newClient.getId())
-                .toUri();
-
         ClientDTO clientDTO = ClientDTO.builder()
                 .id(newClient.getId())
                 .name(newClient.getName())
@@ -44,6 +41,33 @@ public class ClientController {
                 .shipmentPreferences(newClient.getShipmentPreferences())
                 .build();
 
+        clientDTO.add(linkTo(methodOn(ClientController.class).getClientById(newClient.getId())).withSelfRel());
+
+        URI location = URI.create(clientDTO.getLink("self").get().getHref());
+
         return ResponseEntity.created(location).body(clientDTO);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Obtiene un cliente por su ID")
+    public ResponseEntity<ClientDTO> getClientById(@PathVariable Long id) {
+        Client client = clientService.findById(id);
+        ClientDTO clientDTO = toDto(client);
+
+        clientDTO.add(linkTo(methodOn(ClientController.class).getClientById(id)).withSelfRel());
+
+        return ResponseEntity.ok(clientDTO);
+    }
+
+    private ClientDTO toDto(Client client) {
+        return ClientDTO.builder()
+                .id(client.getId())
+                .name(client.getName())
+                .address(client.getAddress())
+                .phoneNumber(client.getPhoneNumber())
+                .email(client.getEmail())
+                .shipmentPreferences(client.getShipmentPreferences())
+                .build();
     }
 }

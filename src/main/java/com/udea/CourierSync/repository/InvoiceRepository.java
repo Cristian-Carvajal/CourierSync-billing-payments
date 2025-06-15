@@ -19,4 +19,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     List<Invoice> findByDueDateBeforeAndPaymentStatusNot(LocalDate date, InvoiceStatus status);
 
+    List<Invoice> findByPaymentStatusIn(List<InvoiceStatus> statuses);
+
+    List<Invoice> findByEmissionDateBetween(LocalDate startDate, LocalDate endDate);
+
 }
