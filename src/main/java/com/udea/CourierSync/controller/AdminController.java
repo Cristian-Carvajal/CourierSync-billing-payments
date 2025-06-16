@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 @Tag(name = "Admin", description = "Operaciones de administración de usuarios")
+@SecurityRequirement(name = "bearer-key")
 public class AdminController {
 
     private final UserService userService;

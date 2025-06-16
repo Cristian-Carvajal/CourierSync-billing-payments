@@ -5,6 +5,7 @@ import com.udea.CourierSync.dto.CreateClientDTO;
 import com.udea.CourierSync.entity.Client;
 import com.udea.CourierSync.service.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/clients")
 @RequiredArgsConstructor
 @Tag(name = "Clients", description = "API para la gestión de Clientes")
+@SecurityRequirement(name = "bearer-key")
 public class ClientController {
 
     private final ClientService clientService;

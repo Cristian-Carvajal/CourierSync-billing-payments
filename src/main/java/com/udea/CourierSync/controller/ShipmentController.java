@@ -9,6 +9,7 @@ import com.udea.CourierSync.entity.Invoice;
 import com.udea.CourierSync.entity.Shipment;
 import com.udea.CourierSync.service.ShipmentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/shipments")
 @RequiredArgsConstructor
 @Tag(name = "Shipments", description = "API para la gestión de Envíos")
+@SecurityRequirement(name = "bearer-key")
 public class ShipmentController {
 
     private final ShipmentService shipmentService;

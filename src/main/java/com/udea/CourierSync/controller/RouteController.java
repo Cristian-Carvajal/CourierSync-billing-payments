@@ -5,6 +5,7 @@ import com.udea.CourierSync.dto.RouteDTO;
 import com.udea.CourierSync.entity.Route;
 import com.udea.CourierSync.service.RouteService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/routes")
 @RequiredArgsConstructor
 @Tag(name = "Routes", description = "API para la gestión de Rutas")
+@SecurityRequirement(name = "bearer-key")
 public class RouteController {
 
     private final RouteService routeService;

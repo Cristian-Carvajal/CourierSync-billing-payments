@@ -4,6 +4,7 @@ import com.udea.CourierSync.dto.FinancialDashboardDTO;
 import com.udea.CourierSync.service.DashboardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/dashboard")
 @RequiredArgsConstructor
 @Tag(name = "Dashboard", description = "API para la visualización de métricas de negocio")
+@SecurityRequirement(name = "bearer-key")
 public class DashboardController {
 
     private final DashboardService dashboardService;

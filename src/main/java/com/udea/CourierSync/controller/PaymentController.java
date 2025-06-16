@@ -5,6 +5,7 @@ import com.udea.CourierSync.dto.PaymentDTO;
 import com.udea.CourierSync.entity.Payment;
 import com.udea.CourierSync.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/payments")
 @RequiredArgsConstructor
 @Tag(name = "Payments", description = "API para la gestión de Pagos")
+@SecurityRequirement(name = "bearer-key")
 public class PaymentController {
 
     private final PaymentService paymentService;

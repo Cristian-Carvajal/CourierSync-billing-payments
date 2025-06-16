@@ -7,6 +7,7 @@ import com.udea.CourierSync.entity.Invoice;
 import com.udea.CourierSync.entity.InvoiceStatus;
 import com.udea.CourierSync.service.InvoiceService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/invoices")
 @RequiredArgsConstructor
 @Tag(name = "Invoices", description = "API para la gestión de Facturas")
+@SecurityRequirement(name = "bearer-key")
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
