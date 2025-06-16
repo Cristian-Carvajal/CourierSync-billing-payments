@@ -12,7 +12,6 @@ public class CreateClientDTO {
 
     private String address;
 
-    @NotBlank(message = "El número de teléfono no puede estar vacío.")
     private String phoneNumber;
 
     @NotBlank(message = "El email no puede estar vacío.")

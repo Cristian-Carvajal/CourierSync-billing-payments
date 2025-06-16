@@ -15,6 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -64,6 +68,7 @@ public class InvoiceController {
                 .body(invoiceContent);
     }
 
+
     private InvoiceDTO toDto(Invoice invoice) {
         return InvoiceDTO.builder()
                 .invoiceId(invoice.getId())
@@ -100,4 +105,18 @@ public class InvoiceController {
                 .append("=========================================\n")
                 .toString();
     }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE')")
+    @Operation(summary = "Obtiene una lista paginada de todas las facturas")
+    public ResponseEntity<PagedModel<InvoiceDTO>> getAllInvoices(
+            Pageable pageable,
+            PagedResourcesAssembler<Invoice> assembler) {
+        Page<Invoice> invoicePage = invoiceService.findAll(pageable);
+
+        PagedModel<InvoiceDTO> pagedModel = assembler.toModel(invoicePage, this::toDto);
+
+        return ResponseEntity.ok(pagedModel);
+    }
+
 }

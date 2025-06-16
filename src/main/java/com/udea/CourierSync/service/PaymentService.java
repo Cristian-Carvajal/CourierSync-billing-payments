@@ -11,6 +11,8 @@ import com.udea.CourierSync.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -82,5 +84,9 @@ public class PaymentService {
         return existingPayments.stream()
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public Page<Payment> findAll(Pageable pageable) {
+        return paymentRepository.findAll(pageable);
     }
 }

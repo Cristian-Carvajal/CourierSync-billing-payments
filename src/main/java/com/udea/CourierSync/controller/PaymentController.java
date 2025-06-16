@@ -12,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 
 import java.net.URI;
 
@@ -50,19 +54,36 @@ public class PaymentController {
         Payment payment = paymentService.findById(id);
         PaymentDTO paymentDTO = toDto(payment);
 
-        paymentDTO.add(linkTo(methodOn(PaymentController.class).getPaymentById(id)).withSelfRel());
-        paymentDTO.add(linkTo(methodOn(InvoiceController.class).getInvoiceById(payment.getInvoice().getId())).withRel("invoice"));
-
         return ResponseEntity.ok(paymentDTO);
     }
 
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE')")
+    @Operation(summary = "Obtiene una lista paginada de todos los pagos")
+    public ResponseEntity<PagedModel<PaymentDTO>> getAllPayments(
+            Pageable pageable,
+            PagedResourcesAssembler<Payment> assembler) {
+
+        Page<Payment> paymentPage = paymentService.findAll(pageable);
+
+        PagedModel<PaymentDTO> pagedModel = assembler.toModel(paymentPage, this::toDto);
+
+        return ResponseEntity.ok(pagedModel);
+    }
+
     private PaymentDTO toDto(Payment payment) {
-        return PaymentDTO.builder()
+        PaymentDTO dto = PaymentDTO.builder()
                 .paymentId(payment.getId())
                 .invoiceId(payment.getInvoice().getId())
                 .amount(payment.getAmount())
                 .paymentMethod(payment.getPaymentMethod())
                 .paymentDate(payment.getPaymentDate())
                 .build();
+
+        dto.add(linkTo(methodOn(PaymentController.class).getPaymentById(payment.getId())).withSelfRel());
+        dto.add(linkTo(methodOn(InvoiceController.class).getInvoiceById(payment.getInvoice().getId())).withRel("invoice"));
+
+        return dto;
     }
 }

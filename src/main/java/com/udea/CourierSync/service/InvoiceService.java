@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -55,6 +57,14 @@ public class InvoiceService {
 
         // Redondear a 2 decimales
         return total.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public Page<Invoice> findAllInvoices(Pageable pageable) {
+        return invoiceRepository.findAll(pageable);
+    }
+
+    public Page<Invoice> findAll(Pageable pageable) {
+        return invoiceRepository.findAll(pageable);
     }
 
 }
