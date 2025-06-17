@@ -44,14 +44,12 @@ public class ManualPaymentController {
     }
 
     private ManualPaymentDTO toDto(ManualPayment payment) {
-        ManualPaymentDTO dto = ManualPaymentDTO.builder()
+        return ManualPaymentDTO.builder()
                 .id(payment.getId())
                 .manualInvoiceId(payment.getManualInvoice().getId())
                 .amount(payment.getAmount())
-                .paymentDate(payment.getPaymentDate())
-                .paymentDate(payment.getPaymentDate())
+                .paymentDate(payment.getPaymentDate()) // Asignación directa de String a String
                 .build();
-        return dto;
     }
 
     @GetMapping
@@ -67,4 +65,5 @@ public class ManualPaymentController {
 
         return ResponseEntity.ok(pagedModel);
     }
+
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "manual_invoices")
@@ -31,6 +32,10 @@ public class ManualInvoice {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InvoiceStatus paymentStatus;
+
+    @OneToMany(mappedBy = "manualInvoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ManualPayment> payments;
+
 
     @PrePersist
     protected void onCreate() {

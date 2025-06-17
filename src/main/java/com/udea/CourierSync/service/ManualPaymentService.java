@@ -9,9 +9,9 @@ import com.udea.CourierSync.exception.ResourceNotFoundException;
 import com.udea.CourierSync.repository.ManualInvoiceRepository;
 import com.udea.CourierSync.repository.ManualPaymentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
@@ -26,55 +26,34 @@ public class ManualPaymentService {
 
     @Transactional
     public ManualPayment createPayment(CreateManualPaymentDTO dto) {
-        System.out.println("====================");
+        // 1. Encontrar la factura manual
         ManualInvoice invoice = manualInvoiceRepository.findById(dto.getManualInvoiceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Factura manual con id " + dto.getManualInvoiceId() + " no encontrada."));
-        System.out.println(dto.getManualInvoiceId());
-        validatePayment(dto, invoice);
 
+        // 2. Crear y guardar el nuevo pago
         ManualPayment newPayment = new ManualPayment();
         newPayment.setManualInvoice(invoice);
         newPayment.setAmount(dto.getAmount());
-        newPayment.setPaymentDate(dto.getPaymentDate());
+        newPayment.setPaymentDate(dto.getPaymentDate()); // Asignación directa de String
         ManualPayment savedPayment = manualPaymentRepository.save(newPayment);
+
+        // 3. Convertir el String de estado a Enum y actualizar la factura
+        try {
+            InvoiceStatus status = InvoiceStatus.valueOf(dto.getNewStatus().toUpperCase());
+            invoice.setPaymentStatus(status);
+            manualInvoiceRepository.save(invoice);
+        } catch (IllegalArgumentException e) {
+            // Esto no debería pasar gracias a la validación @Pattern, pero es una defensa extra.
+            throw new BusinessException("Estado '" + dto.getNewStatus() + "' inválido.");
+        }
 
         return savedPayment;
     }
 
-    private void validatePayment(CreateManualPaymentDTO paymentDto, ManualInvoice invoice) {
-        if (invoice.getPaymentStatus() == InvoiceStatus.PAID) {
-            throw new BusinessException("La factura ya ha sido pagada en su totalidad.");
-        }
-
-        BigDecimal totalPaid = getTotalPaidForInvoice(invoice.getId());
-        BigDecimal remainingAmount = invoice.getAmount().subtract(totalPaid);
-
-        if (paymentDto.getAmount().compareTo(remainingAmount) > 0) {
-            throw new BusinessException("El monto del pago (" + paymentDto.getAmount()
-                    + ") excede el saldo pendiente (" + remainingAmount + ").");
-        }
-    }
-
-    private void updateInvoiceStatus(ManualInvoice invoice) {
-        BigDecimal totalPaid = getTotalPaidForInvoice(invoice.getId());
-
-        if (totalPaid.compareTo(invoice.getAmount()) >= 0) {
-            invoice.setPaymentStatus(InvoiceStatus.PAID);
-        } else {
-            invoice.setPaymentStatus(InvoiceStatus.PENDING);
-        }
-        manualInvoiceRepository.save(invoice);
-    }
-
-    private BigDecimal getTotalPaidForInvoice(Long invoiceId) {
-        List<ManualPayment> existingPayments = manualPaymentRepository.findByManualInvoiceId(invoiceId);
-        return existingPayments.stream()
-                .map(ManualPayment::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // Marcar como de solo lectura optimiza la consulta
     public Page<ManualPayment> findAll(Pageable pageable) {
         return manualPaymentRepository.findAll(pageable);
     }
+
+    // El resto de los métodos (findAll, etc.) no necesitan cambios
 }

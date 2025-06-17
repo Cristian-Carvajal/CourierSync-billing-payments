@@ -1,13 +1,12 @@
 package com.udea.CourierSync.dto;
 
-import com.udea.CourierSync.entity.InvoiceStatus;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 public class CreateManualPaymentDTO {
@@ -19,10 +18,10 @@ public class CreateManualPaymentDTO {
     @Positive(message = "El monto debe ser un valor positivo.")
     private BigDecimal amount;
 
-    @NotNull(message = "La fecha del pago es obligatoria.")
-    @PastOrPresent(message = "La fecha del pago no puede ser en el futuro.")
+    @NotBlank(message = "La fecha del pago es obligatoria.")
     private String paymentDate;
 
-    @NotNull(message = "Debe especificar el nuevo estado de la factura.")
-    private InvoiceStatus newStatus; // El usuario elegirá entre PENDING o PAID
+    @NotBlank(message = "Debe especificar el nuevo estado de la factura.")
+    @Pattern(regexp = "^(PENDING|PAID|OVERDUE)$", message = "El estado debe ser PENDING, PAID u OVERDUE")
+    private String newStatus;
 }
