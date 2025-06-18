@@ -47,6 +47,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (requestURI.startsWith("/actuator/prometheus")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
